@@ -69,6 +69,13 @@ config.keys = {
         action = wezterm.action.SendString '\x02;',
     },
 
+    -- Swap current pane with the last active pane (Ctrl+Alt+s) -> Sends Prefix + Shift + s (S)
+    {
+        key = 's',
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString '\x02S',
+    },
+
     -- Navigate panes using Ctrl+Alt + Arrow keys -> Sends Prefix + Arrow Key escape code
     {
         key = 'LeftArrow',
