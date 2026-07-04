@@ -31,6 +31,58 @@ config.keys = {
         mods = is_windows and 'CTRL|SHIFT' or 'SUPER', 
         action = wezterm.action.CopyTo 'Clipboard',
     },
+
+    -- --- TMUX PANE (PANEL) MANAGEMENT ---
+
+    -- Split pane vertically (Ctrl+Alt+v) -> Sends Prefix + |
+    {
+        key = 'v',
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString '\x02|',
+    },
+
+    -- Split pane horizontally (Ctrl+Alt+h) -> Sends Prefix + -
+    {
+        key = 'h',
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString '\x02-',
+    },
+
+    -- Toggle Pane Zoom / Fullscreen (Ctrl+Alt+z) -> Sends Prefix + z
+    {
+        key = 'z',
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString '\x02z',
+    },
+
+    -- Close current pane (Ctrl+Alt+w) -> Sends Prefix + x
+    {
+        key = 'w',
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString '\x02x',
+    },
+
+    -- Navigate panes using Ctrl+Alt + Arrow keys -> Sends Prefix + Arrow Key escape code
+    {
+        key = 'LeftArrow',
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString '\x02\x1b[D',
+    },
+    {
+        key = 'RightArrow',
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString '\x02\x1b[C',
+    },
+    {
+        key = 'UpArrow',
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString '\x02\x1b[A',
+    },
+    {
+        key = 'DownArrow',
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString '\x02\x1b[B',
+    },
 }
 
 config.mouse_bindings = {
