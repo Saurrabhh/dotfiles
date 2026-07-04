@@ -69,6 +69,13 @@ config.keys = {
         action = wezterm.action.SendString '\x02;',
     },
 
+    -- Rename current pane (Ctrl+Alt+r) -> Sends Prefix + t (opens rename prompt)
+    {
+        key = 'r',
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString '\x02t',
+    },
+
     -- Navigate panes using Ctrl+Alt + Arrow keys (sends clean unmodified arrow keys)
     {
         key = 'LeftArrow',
