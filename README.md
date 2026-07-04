@@ -76,20 +76,41 @@ To set up the minimal prompt showing only the active folder name in JetBrains Bl
 
 ---
 
-## ⌨️ Custom Keybindings
+## ⌨️ Keyboard Shortcuts Reference
 
-Here is a quick reference for the custom layouts and pane shortcuts configured in this repository:
+This repository maps complex Tmux pane management functions to highly intuitive, modern WezTerm hotkeys. You can use either the WezTerm global shortcuts or the native Tmux prefix commands.
 
-### Pane Management & Splitting
-*   **Split Vertical** (Side-by-side): `Ctrl + Alt + v` (sends Prefix + `|`)
-*   **Split Horizontal** (Top-to-bottom): `Ctrl + Alt + h` (sends Prefix + `-`)
-*   **Zoom Active Pane** (Toggle fullscreen): `Ctrl + Alt + z` (sends Prefix + `z`)
-*   **Close Active Pane**: `Ctrl + Alt + w` (sends Prefix + `x`)
+### 💻 1. WezTerm Custom Shortcuts (WSL & macOS)
 
-### Navigation & Layout Swapping
-*   **Navigate Panes**: `Ctrl + Alt + Arrow Keys`
-*   **Swap Panes** (Move pane contents): `Ctrl + Alt + Shift + Arrow Keys`
+| Action | Shortcut (WSL / Windows) | Shortcut (macOS) | Under-the-Hood Tmux Command |
+| :--- | :--- | :--- | :--- |
+| **Copy Selected Text** | `Ctrl + Shift + c` | `Cmd + c` | Copy selection to system clipboard |
+| **Paste Clipboard Text** | `Ctrl + v` | `Cmd + v` | Paste from system clipboard |
+| **Split Pane Vertically** (Left/Right) | `Ctrl + Alt + v` | `Ctrl + Alt + v` | `split-window -h` (Prefix + `|`) |
+| **Split Pane Horizontally** (Top/Bottom) | `Ctrl + Alt + h` | `Ctrl + Alt + h` | `split-window -v` (Prefix + `-`) |
+| **Toggle Zoom / Fullscreen Pane** | `Ctrl + Alt + z` | `Ctrl + Alt + z` | `resize-pane -Z` (Prefix + `z`) |
+| **Close Active Pane** | `Ctrl + Alt + w` | `Ctrl + Alt + w` | `kill-pane` (Prefix + `x`) |
+| **Toggle Last Active Pane** | `Ctrl + Alt + ;` | `Ctrl + Alt + ;` | Toggle back-and-forth (Prefix + `;`) |
+| **Rename Active Pane** | `Ctrl + Alt + n` | `Ctrl + Alt + n` | `select-pane -T` (Prefix + `r`) |
+| **Navigate Panes** | `Ctrl + Alt + Arrow Keys` | `Ctrl + Alt + Arrow Keys` | Focus adjacent pane (Prefix + Arrow) |
+| **Swap Panes** (Exchange layout content) | `Ctrl + Alt + Shift + Arrows` | `Ctrl + Alt + Shift + Arrows` | Swap active pane (Prefix + Shift + Arrow) |
+| **Join Pane Vertically** (Place below last active) | `Ctrl + Alt + j` | `Ctrl + Alt + j` | `join-pane -v -t !` (Prefix + `J`) |
+| **Join Pane Horizontally** (Place right of last active) | `Ctrl + Alt + k` | `Ctrl + Alt + k` | `join-pane -h -t !` (Prefix + `K`) |
+| **Switch directly to Pane 1-9** | `Ctrl + Alt + [1-9]` | `Ctrl + Alt + [1-9]` | Switch directly (Prefix + `q` + `[1-9]`) |
 
-### 🚀 Advanced: Join/Move Panes
-*   **`Ctrl + Alt + j`**: Merges the current active pane **below** the last active pane (vertical split).
-*   **`Ctrl + Alt + k`**: Merges the current active pane **to the right of** the last active pane (horizontal split).
+---
+
+### 📦 2. Native Tmux Bindings (Used after pressing Prefix: `Ctrl + b`)
+
+If you are using Tmux directly or want to use the default bindings, these custom overrides are defined in your `.tmux.conf`:
+
+| Tmux Command Sequence | Action Description |
+| :--- | :--- |
+| `Ctrl + b` then `\|` | Split current pane vertically (side-by-side) |
+| `Ctrl + b` then `-` | Split current pane horizontally (top-bottom) |
+| `Ctrl + b` then `r` | Prompts to rename the current active pane title |
+| `Ctrl + b` then `Shift + Arrow Keys` | Swap the active pane with an adjacent pane in that direction |
+| `Ctrl + b` then `J` | Move current pane and join it **below** the last active pane |
+| `Ctrl + b` then `K` | Move current pane and join it **to the right** of the last active pane |
+| `Ctrl + b` then `q` | Displays pane numbers temporarily (press `1-9` to jump directly) |
+
