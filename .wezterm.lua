@@ -193,10 +193,16 @@ config.mouse_bindings = {
     },
 }
 
--- 4. Automatically start WezTerm in Fullscreen mode
+-- 4. Automatically maximize on Windows / start native Fullscreen on macOS
 wezterm.on('gui-startup', function(cmd)
     local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
-    window:gui_window():toggle_fullscreen()
+    local gui_window = window:gui_window()
+    if is_windows then
+        gui_window:maximize()
+    else
+        gui_window:toggle_fullscreen()
+    end
 end)
+
 
 return config
