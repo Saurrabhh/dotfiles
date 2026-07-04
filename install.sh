@@ -68,16 +68,14 @@ if [ -f "$HOME/.bashrc" ]; then
     fi
 fi
 
-# Zsh Setup (~/.zshrc)
-if [ -f "$HOME/.zshrc" ]; then
-    if ! grep -q "#3574f0" "$HOME/.zshrc"; then
-        echo -e "\n# JetBrains Blue Minimal Prompt (Added by installer)" >> "$HOME/.zshrc"
-        echo "PROMPT='%F{#3574f0}%c%f $ '" >> "$HOME/.zshrc"
-        echo "✅ Configured minimal prompt in ~/.zshrc"
-    else
-        echo "ℹ️  Minimal prompt already configured in ~/.zshrc"
-    fi
+# Zsh Setup (Symlink ~/.zshrc)
+echo "🔗 Symlinking .zshrc..."
+if [ -f "$HOME/.zshrc" ] && [ ! -L "$HOME/.zshrc" ]; then
+    mv "$HOME/.zshrc" "$HOME/.zshrc.backup"
+    echo "⚠️  Existing ~/.zshrc backed up to ~/.zshrc.backup"
 fi
+ln -sf "$DIR/.zshrc" "$HOME/.zshrc"
+echo "✅ Symlinked .zshrc to ~/.zshrc"
 
 # Reload active tmux configuration if tmux is running
 if tmux info &>/dev/null; then

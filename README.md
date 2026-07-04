@@ -87,17 +87,18 @@ Neovim is configured as a lightweight coding IDE, equipped with Native LSP confi
 
 ---
 
-### 🐚 4. Shell Prompts (JetBrains Blue Path)
-This changes your terminal prompt to show only the current folder name in JetBrains Blue (`#3574f0` / RGB `53, 116, 240`) for a clean, minimal interface.
+### 🐚 4. Shell Prompts & Zsh Configuration
 
-*   **Zsh Setup (`~/.zshrc` on macOS & WSL)**:
-    Append these lines to the end of your `~/.zshrc`:
-    ```zsh
-    # Set up a clean, minimal JetBrains-themed prompt
-    PROMPT='%F{#3574f0}%c%f $ '
+This repository provides a portable Zsh configuration file that handles OS-specific variables, history settings, completions, and styles your prompt to show only the current folder name in JetBrains Blue (`#3574f0`).
+
+*   **Config File**: [.zshrc](file:///mnt/c/Users/Saurabh/development/dotfiles/.zshrc)
+*   **Zsh Setup (macOS & WSL)**:
+    We recommend symlinking the repository's `.zshrc` to your home directory (the install script will back up your old one to `~/.zshrc.backup` automatically):
+    ```bash
+    ln -sf ~/development/dotfiles/.zshrc ~/.zshrc
     ```
-*   **Bash Setup (`~/.bashrc` on WSL)**:
-    Append these lines to the end of your `~/.bashrc`:
+*   **Bash Setup (WSL)**:
+    If you use Bash instead of Zsh in WSL, append these lines to your `~/.bashrc`:
     ```bash
     # Set up a clean, minimal JetBrains-themed prompt
     if [ "$color_prompt" = yes ]; then
@@ -106,7 +107,7 @@ This changes your terminal prompt to show only the current folder name in JetBra
         PS1='\W \$ '
     fi
     ```
-*   **Apply Config**: Run `source ~/.zshrc` or `source ~/.bashrc`.
+*   **Apply Config**: Run `source ~/.zshrc` or `source ~/.bashrc` to refresh.
 
 ---
 
