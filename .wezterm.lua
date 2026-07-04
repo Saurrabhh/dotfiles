@@ -97,6 +97,28 @@ config.keys = {
         mods = 'CTRL|ALT',
         action = wezterm.action.SendString '\x02\x1b[B',
     },
+
+    -- Swap panes using Ctrl+Alt+Shift + Arrow keys -> Sends Prefix + Shift + Arrow Key escape code
+    {
+        key = 'LeftArrow',
+        mods = 'CTRL|ALT|SHIFT',
+        action = wezterm.action.SendString '\x02\x1b[1;2D',
+    },
+    {
+        key = 'RightArrow',
+        mods = 'CTRL|ALT|SHIFT',
+        action = wezterm.action.SendString '\x02\x1b[1;2C',
+    },
+    {
+        key = 'UpArrow',
+        mods = 'CTRL|ALT|SHIFT',
+        action = wezterm.action.SendString '\x02\x1b[1;2A',
+    },
+    {
+        key = 'DownArrow',
+        mods = 'CTRL|ALT|SHIFT',
+        action = wezterm.action.SendString '\x02\x1b[1;2B',
+    },
 }
 
 config.mouse_bindings = {
