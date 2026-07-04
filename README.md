@@ -33,38 +33,71 @@ To set up everything at once on a new machine:
 
 ---
 
-## 🛠️ Manual Installation (Step-by-Step)
+## 🛠️ Component Setup & Manual Installation
 
-If you prefer to configure things manually, use the steps below:
+Below are the detailed manual setup instructions and configuration descriptions for each individual component.
 
-### 1. Tmux Configuration
-Symlink the Tmux configuration to your Unix home directory:
-```bash
-ln -sf ~/development/dotfiles/.tmux.conf ~/.tmux.conf
-```
-*Reload active session:* `tmux source-file ~/.tmux.conf`
+---
 
-### 2. WezTerm Configuration
-*   **On macOS**: Symlink to your home directory:
+### 💻 1. WezTerm Setup
+WezTerm serves as the main graphical terminal window, styled with JetBrains-equivalent color overrides.
+
+*   **Config File**: [.wezterm.lua](file:///mnt/c/Users/Saurabh/development/dotfiles/.wezterm.lua)
+*   **Aesthetics**: Base scheme is `Tokyo Night`, with background and text overridden to match the JetBrains IntelliJ IDEs (`#1e1f22` background, `#dfe1e5` text, and `#214283` selection blue). Has thin window padding (`10px`), disabled scrollbar, and launches maximized on Windows or in native fullscreen space on macOS.
+*   **Mac Setup**:
     ```bash
     ln -sf ~/development/dotfiles/.wezterm.lua ~/.wezterm.lua
     ```
-*   **On WSL (Windows)**: Create a native Windows directory link to your User Profile (`C:\Users\Saurabh`):
+*   **Windows / WSL Setup**:
+    Run this command in WSL to link the config directly to your Windows User Profile (`C:\Users\Saurabh\.wezterm.lua`):
     ```bash
     cmd.exe /c "mklink %USERPROFILE%\.wezterm.lua C:\Users\Saurabh\development\dotfiles\.wezterm.lua"
     ```
 
-### 3. Shell Prompts (JetBrains Blue Path)
-To set up the minimal prompt showing only the active folder name in JetBrains Blue:
+---
 
-*   **For Zsh (`~/.zshrc` on macOS & WSL)**:
-    Add the following lines to your `~/.zshrc`:
+### 📦 2. Tmux Setup
+Tmux handles layout splitting, session multiplexing, and in-terminal tabs.
+
+*   **Config File**: [.tmux.conf](file:///mnt/c/Users/Saurabh/development/dotfiles/.tmux.conf)
+*   **Aesthetics**: Styled like a modern browser tab bar. The status line background matches the IntelliJ UI gray (`#2b2d31`). Active window tab matches the editor background (`#1e1f22`) with bold text, while inactive tabs blend in. Active pane borders are highlighted in JetBrains Blue (`#3574f0`).
+*   **Setup (WSL & Mac)**:
+    ```bash
+    ln -sf ~/development/dotfiles/.tmux.conf ~/.tmux.conf
+    ```
+*   **Apply Config**: Inside an active Tmux session, run:
+    ```bash
+    tmux source-file ~/.tmux.conf
+    ```
+
+---
+
+### 📝 3. Neovim Setup
+Neovim is configured as a lightweight coding IDE, equipped with Native LSP configs, Flutter development tools, and in-editor rich Markdown preview.
+
+*   **Config Folder**: [.config/nvim](file:///mnt/c/Users/Saurabh/development/dotfiles/.config/nvim/)
+*   **Aesthetics**: Integrates `render-markdown.nvim` to automatically parse and render Markdown headers, code blocks, lists, and tables inline directly inside the editor buffer.
+*   **Setup (WSL & Mac)**:
+    Make sure your local config directory exists, then link the folder:
+    ```bash
+    mkdir -p ~/.config
+    ln -sfn ~/development/dotfiles/.config/nvim ~/.config/nvim
+    ```
+*   **Apply Config**: Launch `nvim`. On the first startup, `lazy.nvim` will automatically download and install `render-markdown.nvim`, `nvim-treesitter`, and the required markdown syntax parsers.
+
+---
+
+### 🐚 4. Shell Prompts (JetBrains Blue Path)
+This changes your terminal prompt to show only the current folder name in JetBrains Blue (`#3574f0` / RGB `53, 116, 240`) for a clean, minimal interface.
+
+*   **Zsh Setup (`~/.zshrc` on macOS & WSL)**:
+    Append these lines to the end of your `~/.zshrc`:
     ```zsh
     # Set up a clean, minimal JetBrains-themed prompt
     PROMPT='%F{#3574f0}%c%f $ '
     ```
-*   **For Bash (`~/.bashrc` on WSL)**:
-    Add the following lines to your `~/.bashrc`:
+*   **Bash Setup (`~/.bashrc` on WSL)**:
+    Append these lines to the end of your `~/.bashrc`:
     ```bash
     # Set up a clean, minimal JetBrains-themed prompt
     if [ "$color_prompt" = yes ]; then
@@ -73,6 +106,7 @@ To set up the minimal prompt showing only the active folder name in JetBrains Bl
         PS1='\W \$ '
     fi
     ```
+*   **Apply Config**: Run `source ~/.zshrc` or `source ~/.bashrc`.
 
 ---
 

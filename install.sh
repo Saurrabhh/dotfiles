@@ -48,7 +48,13 @@ else
     echo "✅ Symlinked .wezterm.lua to ~/.wezterm.lua"
 fi
 
-# 3. Add Minimal JetBrains Blue Prompts
+# 3. Neovim Configuration Symlink (Works on WSL and macOS)
+echo "🔗 Symlinking Neovim configuration..."
+mkdir -p "$HOME/.config"
+ln -sfn "$DIR/.config/nvim" "$HOME/.config/nvim"
+echo "✅ Symlinked .config/nvim to ~/.config/nvim"
+
+# 4. Add Minimal JetBrains Blue Prompts
 echo "✏️  Configuring Shell Prompts..."
 
 # Bash Setup (~/.bashrc)
