@@ -39,7 +39,25 @@ require("lazy").setup({
         }
       }
     }
-  }
+  },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "markdown", "markdown_inline", "lua" },
+        highlight = { enable = true },
+      })
+    end,
+  },
+  {
+    "nvim-tree/nvim-web-devicons",
+  },
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
+    opts = {},
+  },
 })
 
 -- =====================================================================
