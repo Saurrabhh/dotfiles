@@ -13,11 +13,12 @@ else
     config.default_prog = { '/bin/zsh' }
 end
 
--- 3. UI and Aesthetics (Tokyo Night UI with Muted Sage/Olive Overrides)
+-- 3. UI and Aesthetics (Tokyo Night UI with JetBrains Island Dark Overrides)
 config.color_scheme = 'Tokyo Night'
 config.colors = {
-    background = '#181a18', -- Dark gray-green/sage background (best for eye strain)
-    foreground = '#d3c6aa', -- Warm sand-white text
+    background = '#1e1f22', -- JetBrains editor background (neutral charcoal)
+    foreground = '#dfe1e5', -- JetBrains text color (soft off-white)
+    selection_bg = '#214283', -- JetBrains selection blue
 }
 config.font = wezterm.font('JetBrains Mono', { weight = 'Regular' })
 config.font_size = 11.5
