@@ -46,15 +46,20 @@ if grep -qE "(Microsoft|WSL)" /proc/version 2>/dev/null; then
             # Convert the WSL dotfiles path of .wezterm.lua to a Windows NTFS path
             WIN_FILE_PATH=$(wslpath -w "$DIR/.wezterm.lua")
             
-            # Remove any existing WezTerm files or links in the Windows profile
-            cmd.exe /c "del %USERPROFILE%\.wezterm.lua" 2>/dev/null || true
+            # Remove any existing WezTerm files, directories, or links in the Windows profile
+            rm -rf "$WIN_HOME/.wezterm.lua"
             
-            # Attempt to create a native Windows NTFS symbolic link using cmd.exe.
-            # This requires Developer Mode or Admin rights on the Windows host.
-            if cmd.exe /c "mklink %USERPROFILE%\.wezterm.lua \"$WIN_FILE_PATH\"" &>/dev/null; then
-                echo "✅ Created Windows NTFS symlink for .wezterm.lua in %USERPROFILE%"
+            # First attempt: Try creating a standard symlink directly from WSL.
+            # This works if the destination is on a mounted Windows drive (e.g., /mnt/c/)
+            # and Developer Mode is enabled.
+            if [[ "$DIR" == /mnt/* ]] && ln -sf "$DIR/.wezterm.lua" "$WIN_HOME/.wezterm.lua" 2>/dev/null; then
+                echo "✅ Created Windows NTFS symlink for .wezterm.lua via ln -sf"
+            # Second attempt: Fallback to cmd.exe mklink without escaped internal quotes
+            # (which avoids the trailing backslash/os error 123 bug).
+            elif cmd.exe /c mklink "%USERPROFILE%\.wezterm.lua" "$WIN_FILE_PATH" &>/dev/null; then
+                echo "✅ Created Windows NTFS symlink for .wezterm.lua via cmd.exe mklink"
             else
-                # Fallback: Copy the file directly if NTFS symlink creation is blocked
+                # Final fallback: Copy the file directly if symlink creation is blocked/fails
                 cp "$DIR/.wezterm.lua" "$WIN_HOME/.wezterm.lua"
                 echo "✅ Copied .wezterm.lua to $WIN_HOME/.wezterm.lua (symlink fallback)"
             fi

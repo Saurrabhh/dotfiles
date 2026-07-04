@@ -104,6 +104,41 @@ require("lazy").setup({
       { "<leader>mp", "<cmd>MarkdownPreviewToggle<cr>", desc = "Toggle Markdown Preview" },
     },
   },
+
+  -- Git integration (signs in status column, hunk previews, and diffs)
+  {
+    "lewis6991/gitsigns.nvim",
+    config = function()
+      require('gitsigns').setup({
+        current_line_blame = true, -- Adds inline blame annotations to lines
+      })
+      
+      -- Keymaps for git navigation and actions
+      local gs = require('gitsigns')
+      vim.keymap.set('n', ']c', gs.next_hunk, { desc = "Next Git Hunk" })
+      vim.keymap.set('n', '[c', gs.prev_hunk, { desc = "Previous Git Hunk" })
+      vim.keymap.set('n', '<leader>gd', gs.diffthis, { desc = "Git Diff Current File" })
+      vim.keymap.set('n', '<leader>gp', gs.preview_hunk, { desc = "Git Preview Hunk" })
+      vim.keymap.set('n', '<leader>gb', gs.blame_line, { desc = "Git Blame Line" })
+      vim.keymap.set('n', '<leader>gr', gs.reset_hunk, { desc = "Git Reset Hunk" })
+    end
+  },
+
+  -- Interactive side-by-side git diff views for the whole project
+  {
+    "sindrets/diffview.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require('diffview').setup({
+        enhanced_diff_hl = true, -- Use Neovim's built-in enhancement for diff highlights
+      })
+      
+      -- Keymaps to open/close Diffview and view history
+      vim.keymap.set('n', '<leader>do', ':DiffviewOpen<CR>', { desc = "Open Git Diffview" })
+      vim.keymap.set('n', '<leader>dc', ':DiffviewClose<CR>', { desc = "Close Git Diffview" })
+      vim.keymap.set('n', '<leader>dh', ':DiffviewFileHistory %<CR>', { desc = "Git File History" })
+    end
+  },
 })
 
 -- =====================================================================

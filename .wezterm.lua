@@ -186,6 +186,41 @@ config.keys = {
         },
     },
 
+    -- PANE RESIZING
+    -- Resize active pane using Ctrl+Shift + Arrow keys (sends Ctrl+b followed by Ctrl+Arrow)
+    {
+        key = 'LeftArrow',
+        mods = 'CTRL|SHIFT',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'LeftArrow', mods = 'CTRL' },
+        },
+    },
+    {
+        key = 'RightArrow',
+        mods = 'CTRL|SHIFT',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'RightArrow', mods = 'CTRL' },
+        },
+    },
+    {
+        key = 'UpArrow',
+        mods = 'CTRL|SHIFT',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'UpArrow', mods = 'CTRL' },
+        },
+    },
+    {
+        key = 'DownArrow',
+        mods = 'CTRL|SHIFT',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'DownArrow', mods = 'CTRL' },
+        },
+    },
+
     -- ADVANCED: JOIN/MERGE PANES
     -- Move current active pane and stack it BELOW the last active pane (Ctrl+Alt+j)
     {
