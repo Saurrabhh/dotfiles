@@ -1,29 +1,47 @@
+-- =====================================================================
+-- 💻 WezTerm Configuration
+-- Linked to: ~/.wezterm.lua (macOS) or %USERPROFILE%\.wezterm.lua (Windows)
+-- Core Theme: Tokyo Night with JetBrains Island Dark Overrides
+-- =====================================================================
+
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
--- 1. Identify the Operating System
+-- ---------------------------------------------------------------------
+-- 1. OPERATING SYSTEM DETECTION
+-- ---------------------------------------------------------------------
+-- Identify the host OS using the target triple compiler identifier.
 local is_windows = wezterm.target_triple == 'x86_64-pc-windows-msvc'
 
--- 2. Set the Default Program
+-- ---------------------------------------------------------------------
+-- 2. DEFAULT SHELL PROGRAM
+-- ---------------------------------------------------------------------
+-- Select the default shell program depending on the platform.
 if is_windows then
-    -- On Windows, launch WSL directly
+    -- On Windows, launch WSL directly into your default Linux distro.
     config.default_prog = { 'wsl.exe' }
 else
-    -- On macOS, launch the default zsh shell
+    -- On macOS, launch the standard login Zsh shell.
     config.default_prog = { '/bin/zsh' }
 end
 
--- 3. UI and Aesthetics (Tokyo Night UI with JetBrains Island Dark Overrides)
+-- ---------------------------------------------------------------------
+-- 3. UI AND AESTHETICS (JetBrains Island Dark Overrides)
+-- ---------------------------------------------------------------------
+-- Use the Tokyo Night syntax theme but override the editor canvas and 
+-- text colors to match the modern JetBrains IntelliJ New UI colors.
 config.color_scheme = 'Tokyo Night'
 config.colors = {
-    background = '#1e1f22', -- JetBrains editor background (neutral charcoal)
-    foreground = '#dfe1e5', -- JetBrains text color (soft off-white)
-    selection_bg = '#214283', -- JetBrains selection blue
+    background = '#1e1f22',   -- IntelliJ New UI editor background (neutral charcoal)
+    foreground = '#dfe1e5',   -- IntelliJ New UI default text color (soft off-white)
+    selection_bg = '#214283', -- IntelliJ New UI active selection highlight (blue)
 }
+
+-- Typographic Settings
 config.font = wezterm.font('JetBrains Mono', { weight = 'Regular' })
 config.font_size = 11.5
 
--- Clean window padding
+-- Window Padding (adds subtle breathing room inside the window frame)
 config.window_padding = {
     left = 10,
     right = 10,
@@ -31,73 +49,75 @@ config.window_padding = {
     bottom = 10,
 }
 
--- Disable scrollbar for a clean look
+-- Disable window scrollbars for a clean, distraction-free interface
 config.enable_scroll_bar = false
 
--- Let tmux handle the tabs, keeping WezTerm minimal
+-- Tab Bar Handling (let Tmux manage all terminal splits/tabs)
 config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = false
 
-
+-- ---------------------------------------------------------------------
+-- 4. KEYBOARD SHORTCUTS & KEYBINDINGS
+-- ---------------------------------------------------------------------
+-- Maps complex Tmux multiplexer controls to global WezTerm shortcuts.
+-- Note: '\x02' represents Ctrl+b (the default Tmux command prefix).
 config.keys = {
-    -- PASTE: CTRL+V on Windows, CMD+V on Mac
+    -- CLIPBOARD CONTROLS
+    -- Paste text: Ctrl+V on Windows/WSL, Cmd+V on macOS
     {
         key = 'v',
         mods = is_windows and 'CTRL' or 'SUPER', 
         action = wezterm.action.PasteFrom 'Clipboard',
     },
-    -- COPY: CTRL+SHIFT+C on Windows, CMD+C on Mac
+    -- Copy text: Ctrl+Shift+C on Windows/WSL, Cmd+C on macOS
     {
         key = 'c',
         mods = is_windows and 'CTRL|SHIFT' or 'SUPER', 
         action = wezterm.action.CopyTo 'Clipboard',
     },
 
-    -- --- TMUX PANE (PANEL) MANAGEMENT ---
-
-    -- Split pane vertically (Ctrl+Alt+v) -> Sends Prefix + |
+    -- PANE CREATION
+    -- Split vertical (side-by-side) -> Sends Ctrl+b followed by |
     {
         key = 'v',
         mods = 'CTRL|ALT',
         action = wezterm.action.SendString '\x02|',
     },
-
-    -- Split pane horizontally (Ctrl+Alt+h) -> Sends Prefix + -
+    -- Split horizontal (top-to-bottom) -> Sends Ctrl+b followed by -
     {
         key = 'h',
         mods = 'CTRL|ALT',
         action = wezterm.action.SendString '\x02-',
     },
 
-    -- Toggle Pane Zoom / Fullscreen (Ctrl+Alt+z) -> Sends Prefix + z
+    -- PANE LAYOUT MODIFIERS
+    -- Zoom/Fullscreen the current pane -> Sends Ctrl+b followed by z
     {
         key = 'z',
         mods = 'CTRL|ALT',
         action = wezterm.action.SendString '\x02z',
     },
-
-    -- Close current pane (Ctrl+Alt+w) -> Sends Prefix + x
+    -- Close the active pane -> Sends Ctrl+b followed by x
     {
         key = 'w',
         mods = 'CTRL|ALT',
         action = wezterm.action.SendString '\x02x',
     },
-
-    -- Toggle between the last two active panes (Ctrl+Alt+;) -> Sends Prefix + ;
+    -- Toggle focus between last active panes -> Sends Ctrl+b followed by ;
     {
         key = ';',
         mods = 'CTRL|ALT',
         action = wezterm.action.SendString '\x02;',
     },
-
-    -- Rename current pane (Ctrl+Alt+n) -> Sends Prefix + r to rename the active pane
+    -- Rename active pane title -> Sends Ctrl+b followed by r
     {
         key = 'n',
         mods = 'CTRL|ALT',
         action = wezterm.action.SendString '\x02r',
     },
 
-    -- Navigate panes using Ctrl+Alt + Arrow keys (sends clean unmodified arrow keys)
+    -- PANE FOCUS NAVIGATION
+    -- Navigate focus using Ctrl+Alt + Arrow keys
     {
         key = 'LeftArrow',
         mods = 'CTRL|ALT',
@@ -131,7 +151,8 @@ config.keys = {
         },
     },
 
-    -- Swap panes using Ctrl+Alt+Shift + Arrow keys -> Sends Prefix + Shift + Arrow to tmux
+    -- PANE POSITION SWAPPING
+    -- Swap active pane location using Ctrl+Alt+Shift + Arrow keys
     {
         key = 'LeftArrow',
         mods = 'CTRL|ALT|SHIFT',
@@ -165,14 +186,14 @@ config.keys = {
         },
     },
 
-    -- --- JOIN PANES SHORTCUTS ---
-    -- Move current pane below the last active pane (Ctrl+Alt+j) -> Sends Prefix + J
+    -- ADVANCED: JOIN/MERGE PANES
+    -- Move current active pane and stack it BELOW the last active pane (Ctrl+Alt+j)
     {
         key = 'j',
         mods = 'CTRL|ALT',
         action = wezterm.action.SendString '\x02J',
     },
-    -- Move current pane to the right of the last active pane (Ctrl+Alt+k) -> Sends Prefix + K
+    -- Move current active pane and place it to the RIGHT of the last active pane (Ctrl+Alt+k)
     {
         key = 'k',
         mods = 'CTRL|ALT',
@@ -180,7 +201,9 @@ config.keys = {
     },
 }
 
--- Bind Ctrl + Alt + 1-9 to switch to tmux panes 1-9 directly using display-panes
+-- DIRECT PANE SWITCHING INDEX LOOP
+-- Maps Ctrl+Alt + 1-9 keys to jump directly to Tmux panes 1-9.
+-- Emulates sending: Ctrl+b followed by q followed by the pane number.
 for i = 1, 9 do
     table.insert(config.keys, {
         key = tostring(i),
@@ -189,8 +212,11 @@ for i = 1, 9 do
     })
 end
 
+-- ---------------------------------------------------------------------
+-- 5. MOUSE INTERACTION RULES
+-- ---------------------------------------------------------------------
 config.mouse_bindings = {
-    -- Bind releasing the left mouse button after a selection to copy to clipboard
+    -- Release left mouse button after drag-selection to automatically copy text
     {
         event = { Up = { streak = 1, button = 'Left' } },
         mods = 'NONE',
@@ -198,7 +224,12 @@ config.mouse_bindings = {
     },
 }
 
--- 4. Automatically maximize on Windows / start native Fullscreen on macOS
+-- ---------------------------------------------------------------------
+-- 6. STARTUP EVENT LIFECYCLE HANDLERS
+-- ---------------------------------------------------------------------
+-- OS-specific window opening rules:
+--   * Windows: Maximize window to fill screen but retain taskbar/controls.
+--   * macOS: Enter native fullscreen Space, auto-hiding controls to top hover.
 wezterm.on('gui-startup', function(cmd)
     local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
     local gui_window = window:gui_window()
@@ -209,5 +240,4 @@ wezterm.on('gui-startup', function(cmd)
     end
 end)
 
-
-return config
+return config
