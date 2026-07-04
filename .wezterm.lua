@@ -4,14 +4,13 @@ local config = wezterm.config_builder()
 -- 1. Identify the Operating System
 local is_windows = wezterm.target_triple == 'x86_64-pc-windows-msvc'
 
--- 2. Set the Default Program (Auto-launch tmux)
+-- 2. Set the Default Program
 if is_windows then
-    -- On Windows, launch WSL and immediately attach/create a tmux session named "main"
-    config.default_prog = { 'wsl.exe', '--exec', 'tmux', 'new-session', '-A', '-s', 'main' }
+    -- On Windows, launch WSL directly
+    config.default_prog = { 'wsl.exe' }
 else
-    -- On macOS, use zsh to attach/create a tmux session named "main"
-    -- Adjust '/bin/zsh' if you use bash or fish
-    config.default_prog = { '/bin/zsh', '-c', 'tmux new-session -A -s main' }
+    -- On macOS, launch the default zsh shell
+    config.default_prog = { '/bin/zsh' }
 end
 
 -- 3. UI and Aesthetics (Optional but recommended)
