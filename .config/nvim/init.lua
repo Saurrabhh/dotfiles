@@ -63,8 +63,9 @@ require("lazy").setup({
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate", -- Auto-compiles parsers on updates
+    lazy = false,        -- Disable lazy loading so it loads immediately on startup
     config = function()
-      require("nvim-treesitter.configs").setup({
+      require("nvim-treesitter.config").setup({
         -- Ensure markdown and markdown_inline are installed for rendering integration
         ensure_installed = { "markdown", "markdown_inline", "lua" },
         highlight = { enable = true },
