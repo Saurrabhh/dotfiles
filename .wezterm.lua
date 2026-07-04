@@ -69,57 +69,83 @@ config.keys = {
         action = wezterm.action.SendString '\x02;',
     },
 
-    -- Swap current pane with the last active pane (Ctrl+Alt+s) -> Sends Prefix + Shift + s (S)
-    {
-        key = 's',
-        mods = 'CTRL|ALT',
-        action = wezterm.action.SendString '\x02S',
-    },
-
-    -- Navigate panes using Ctrl+Alt + Arrow keys -> Sends Prefix + Arrow Key escape code
+    -- Navigate panes using Ctrl+Alt + Arrow keys (sends clean unmodified arrow keys)
     {
         key = 'LeftArrow',
         mods = 'CTRL|ALT',
-        action = wezterm.action.SendString '\x02\x1b[D',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'LeftArrow', mods = 'NONE' },
+        },
     },
     {
         key = 'RightArrow',
         mods = 'CTRL|ALT',
-        action = wezterm.action.SendString '\x02\x1b[C',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'RightArrow', mods = 'NONE' },
+        },
     },
     {
         key = 'UpArrow',
         mods = 'CTRL|ALT',
-        action = wezterm.action.SendString '\x02\x1b[A',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'UpArrow', mods = 'NONE' },
+        },
     },
     {
         key = 'DownArrow',
         mods = 'CTRL|ALT',
-        action = wezterm.action.SendString '\x02\x1b[B',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'DownArrow', mods = 'NONE' },
+        },
     },
 
-    -- Swap panes using Ctrl+Alt+Shift + Arrow keys -> Sends Prefix + Shift + Arrow Key escape code
+    -- Swap panes using Ctrl+Alt+Shift + Arrow keys (sends clean Shift+arrow keys)
     {
         key = 'LeftArrow',
         mods = 'CTRL|ALT|SHIFT',
-        action = wezterm.action.SendString '\x02\x1b[1;2D',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'LeftArrow', mods = 'SHIFT' },
+        },
     },
     {
         key = 'RightArrow',
         mods = 'CTRL|ALT|SHIFT',
-        action = wezterm.action.SendString '\x02\x1b[1;2C',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'RightArrow', mods = 'SHIFT' },
+        },
     },
     {
         key = 'UpArrow',
         mods = 'CTRL|ALT|SHIFT',
-        action = wezterm.action.SendString '\x02\x1b[1;2A',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'UpArrow', mods = 'SHIFT' },
+        },
     },
     {
         key = 'DownArrow',
         mods = 'CTRL|ALT|SHIFT',
-        action = wezterm.action.SendString '\x02\x1b[1;2B',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'DownArrow', mods = 'SHIFT' },
+        },
     },
 }
+
+-- Bind Ctrl + Alt + 1-9 to switch to tmux panes 1-9 directly using display-panes
+for i = 1, 9 do
+    table.insert(config.keys, {
+        key = tostring(i),
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString('\x02q' .. tostring(i)),
+    })
+end
 
 config.mouse_bindings = {
     -- Bind releasing the left mouse button after a selection to copy to clipboard
