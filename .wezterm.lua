@@ -13,10 +13,26 @@ else
     config.default_prog = { '/bin/zsh' }
 end
 
--- 3. UI and Aesthetics (Optional but recommended)
+-- 3. UI and Aesthetics (Tokyo Night Storm UI)
 config.color_scheme = 'Tokyo Night'
-config.font = wezterm.font 'JetBrains Mono'
-config.hide_tab_bar_if_only_one_tab = true -- Let tmux handle the tabs
+config.font = wezterm.font('JetBrains Mono', { weight = 'Regular' })
+config.font_size = 11.5
+
+-- Clean window padding
+config.window_padding = {
+    left = 10,
+    right = 10,
+    top = 10,
+    bottom = 10,
+}
+
+-- Disable scrollbar for a clean look
+config.enable_scroll_bar = false
+
+-- Let tmux handle the tabs, keeping WezTerm minimal
+config.hide_tab_bar_if_only_one_tab = true
+config.use_fancy_tab_bar = false
+
 
 config.keys = {
     -- PASTE: CTRL+V on Windows, CMD+V on Mac
@@ -142,6 +158,20 @@ config.keys = {
             wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
             wezterm.action.SendKey { key = 'DownArrow', mods = 'SHIFT' },
         },
+    },
+
+    -- --- JOIN PANES SHORTCUTS ---
+    -- Move current pane below the last active pane (Ctrl+Alt+j) -> Sends Prefix + J
+    {
+        key = 'j',
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString '\x02J',
+    },
+    -- Move current pane to the right of the last active pane (Ctrl+Alt+k) -> Sends Prefix + K
+    {
+        key = 'k',
+        mods = 'CTRL|ALT',
+        action = wezterm.action.SendString '\x02K',
     },
 }
 
