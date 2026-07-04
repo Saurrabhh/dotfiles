@@ -69,11 +69,11 @@ config.keys = {
         action = wezterm.action.SendString '\x02;',
     },
 
-    -- Rename current pane (Ctrl+Alt+r) -> Opens tmux rename command prompt directly
+    -- Rename current pane (Ctrl+Alt+n) -> Sends Prefix + r to rename the active pane
     {
-        key = 'r',
+        key = 'n',
         mods = 'CTRL|ALT',
-        action = wezterm.action.SendString '\x02:command-prompt -p "Rename pane: " "select-pane -T \'%%\'"\r',
+        action = wezterm.action.SendString '\x02r',
     },
 
     -- Navigate panes using Ctrl+Alt + Arrow keys (sends clean unmodified arrow keys)
@@ -110,26 +110,38 @@ config.keys = {
         },
     },
 
-    -- Swap panes using Ctrl+Alt+Shift + Arrow keys -> Sends direct swap commands to tmux
+    -- Swap panes using Ctrl+Alt+Shift + Arrow keys -> Sends Prefix + Shift + Arrow to tmux
     {
         key = 'LeftArrow',
         mods = 'CTRL|ALT|SHIFT',
-        action = wezterm.action.SendString '\x02:swap-pane -t "{left}"\r',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'LeftArrow', mods = 'SHIFT' },
+        },
     },
     {
         key = 'RightArrow',
         mods = 'CTRL|ALT|SHIFT',
-        action = wezterm.action.SendString '\x02:swap-pane -t "{right}"\r',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'RightArrow', mods = 'SHIFT' },
+        },
     },
     {
         key = 'UpArrow',
         mods = 'CTRL|ALT|SHIFT',
-        action = wezterm.action.SendString '\x02:swap-pane -t "{up}"\r',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'UpArrow', mods = 'SHIFT' },
+        },
     },
     {
         key = 'DownArrow',
         mods = 'CTRL|ALT|SHIFT',
-        action = wezterm.action.SendString '\x02:swap-pane -t "{down}"\r',
+        action = wezterm.action.Multiple {
+            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
+            wezterm.action.SendKey { key = 'DownArrow', mods = 'SHIFT' },
+        },
     },
 }
 
