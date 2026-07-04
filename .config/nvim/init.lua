@@ -58,6 +58,52 @@ require("lazy").setup({
       }
     }
   },
+
+  -- Treesitter configuration for parsing and syntax highlighting
+  {
+    "nvim-treesitter/nvim-treesitter",
+    branch = "master",
+    build = ":TSUpdate",
+    event = { "BufReadPost", "BufNewFile" },
+    cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
+    keys = {
+      { "<c-p>", desc = "Decrement selection", mode = "x" },
+    },
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "markdown", "markdown_inline", "dart" },
+        highlight = {
+          enable = true,
+        },
+      })
+    end,
+  },
+
+  -- In-buffer Markdown rendering (Obsidian-like editing preview)
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
+    opts = {
+      heading = {
+        icons = { "󰎤 ", "󰎧 ", "󰎪 ", "󰎭 ", "󰎰 ", "󰎳 " },
+      },
+      checkbox = {
+        enabled = true,
+      },
+    },
+    ft = { "markdown" },
+  },
+
+  -- Synchronized browser markdown previewer (Space + m + p)
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = "cd app && ./install.sh",
+    keys = {
+      { "<leader>mp", "<cmd>MarkdownPreviewToggle<cr>", desc = "Toggle Markdown Preview" },
+    },
+  },
 })
 
 -- =====================================================================

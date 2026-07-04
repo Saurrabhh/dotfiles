@@ -86,20 +86,7 @@ echo "✅ Symlinked .config/nvim directory to ~/.config/nvim"
 # ---------------------------------------------------------------------
 echo "✏️  Configuring Shell Environments..."
 
-# A. Bash Shell Setup (~/.bashrc)
-# If a local .bashrc exists, append the minimal JetBrains Blue prompt.
-# It checks if it has already been appended to prevent duplicate lines.
-if [ -f "$HOME/.bashrc" ]; then
-    if ! grep -q "53;116;240" "$HOME/.bashrc"; then
-        echo -e "\n# JetBrains Blue Minimal Prompt (Added by installer)" >> "$HOME/.bashrc"
-        echo "PS1='\[\033[38;2;53;116;240m\]\W\[\033[00m\] \$ '" >> "$HOME/.bashrc"
-        echo "✅ Configured minimal prompt in ~/.bashrc"
-    else
-        echo "ℹ️  Minimal prompt already configured in ~/.bashrc"
-    fi
-fi
-
-# B. Zsh Shell Setup (Symlink ~/.zshrc)
+# Zsh Shell Setup (Symlink ~/.zshrc)
 # Symlinks the portable, OS-aware .zshrc from the dotfiles repository.
 # Keeps your previous .zshrc file safe by backing it up to .zshrc.backup.
 echo "🔗 Symlinking Zsh configuration..."
@@ -121,5 +108,5 @@ fi
 
 echo "====================================================="
 echo "🎉 Dotfiles installation completed successfully!"
-echo "➡️  Reload your shell to apply: source ~/.bashrc (or source ~/.zshrc)"
+echo "➡️  Reload your shell to apply: source ~/.zshrc"
 echo "====================================================="

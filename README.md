@@ -29,7 +29,7 @@ To set up everything at once on a new machine:
    ./install.sh
    ```
 
-*The script will automatically detect whether you are on WSL or macOS, symlink the configuration files (including WezTerm, Tmux, Neovim, and Zsh) to their correct locations, and configure the minimal prompt for Bash.*
+*The script will automatically detect whether you are on WSL or macOS, symlink the configuration files (including WezTerm, Tmux, Neovim, and Zsh) to their correct locations.*
 
 
 ---
@@ -84,7 +84,7 @@ Neovim is configured as a lightweight coding IDE, equipped with Native LSP confi
     mkdir -p ~/.config
     ln -sfn ~/development/dotfiles/.config/nvim ~/.config/nvim
     ```
-*   **Apply Config**: Launch `nvim`. On the first startup, `lazy.nvim` will automatically download and install `render-markdown.nvim`, `nvim-treesitter`, and the required markdown syntax parsers.
+*   **Apply Config**: Launch `nvim`. On the first startup, `lazy.nvim` will automatically download and install `render-markdown.nvim`, `markdown-preview.nvim`, `nvim-treesitter`, and the required markdown syntax parsers. You can toggle the live browser preview by pressing `<leader>mp` (Space + m + p).
 
 ---
 
@@ -98,17 +98,7 @@ This repository provides a portable Zsh configuration file that handles OS-speci
     ```bash
     ln -sf ~/development/dotfiles/.zshrc ~/.zshrc
     ```
-*   **Bash Setup (WSL)**:
-    If you use Bash instead of Zsh in WSL, append these lines to your `~/.bashrc`:
-    ```bash
-    # Set up a clean, minimal JetBrains-themed prompt
-    if [ "$color_prompt" = yes ]; then
-        PS1='\[\033[38;2;53;116;240m\]\W\[\033[00m\] \$ '
-    else
-        PS1='\W \$ '
-    fi
-    ```
-*   **Apply Config**: Run `source ~/.zshrc` or `source ~/.bashrc` to refresh.
+*   **Apply Config**: Run `source ~/.zshrc` to refresh.
 
 ---
 
