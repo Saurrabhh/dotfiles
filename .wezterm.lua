@@ -13,8 +13,12 @@ else
     config.default_prog = { '/bin/zsh' }
 end
 
--- 3. UI and Aesthetics (Tokyo Night Storm UI)
+-- 3. UI and Aesthetics (Tokyo Night UI with Muted Sage/Olive Overrides)
 config.color_scheme = 'Tokyo Night'
+config.colors = {
+    background = '#181a18', -- Dark gray-green/sage background (best for eye strain)
+    foreground = '#d3c6aa', -- Warm sand-white text
+}
 config.font = wezterm.font('JetBrains Mono', { weight = 'Regular' })
 config.font_size = 11.5
 
