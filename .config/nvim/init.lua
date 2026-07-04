@@ -58,32 +58,6 @@ require("lazy").setup({
       }
     }
   },
-
-  -- Treesitter parser (compiles abstract syntax trees for highlights and text-objects)
-  {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate", -- Auto-compiles parsers on updates
-    lazy = false,        -- Disable lazy loading so it loads immediately on startup
-    config = function()
-      require("nvim-treesitter.config").setup({
-        -- Ensure markdown and markdown_inline are installed for rendering integration
-        ensure_installed = { "markdown", "markdown_inline", "lua" },
-        highlight = { enable = true },
-      })
-    end,
-  },
-
-  -- UI Icons (provides file type visual tags)
-  {
-    "nvim-tree/nvim-web-devicons",
-  },
-
-  -- Render-Markdown (formats and styles markdown elements directly inside buffers)
-  {
-    "MeanderingProgrammer/render-markdown.nvim",
-    dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
-    opts = {}, -- Enables elegant out-of-the-box visual defaults
-  },
 })
 
 -- =====================================================================
