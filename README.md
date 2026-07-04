@@ -29,7 +29,8 @@ To set up everything at once on a new machine:
    ./install.sh
    ```
 
-*The script will automatically detect whether you are on WSL or macOS, symlink the files to their correct locations, and append the JetBrains Blue prompt config to your `.bashrc` and `.zshrc` safely.*
+*The script will automatically detect whether you are on WSL or macOS, symlink the configuration files (including WezTerm, Tmux, Neovim, and Zsh) to their correct locations, and configure the minimal prompt for Bash.*
+
 
 ---
 
