@@ -69,11 +69,11 @@ config.keys = {
         action = wezterm.action.SendString '\x02;',
     },
 
-    -- Rename current pane (Ctrl+Alt+r) -> Sends Prefix + t (opens rename prompt)
+    -- Rename current pane (Ctrl+Alt+r) -> Opens tmux rename command prompt directly
     {
         key = 'r',
         mods = 'CTRL|ALT',
-        action = wezterm.action.SendString '\x02t',
+        action = wezterm.action.SendString '\x02:command-prompt -p "Rename pane: " "select-pane -T \'%%\'"\r',
     },
 
     -- Navigate panes using Ctrl+Alt + Arrow keys (sends clean unmodified arrow keys)
@@ -110,38 +110,26 @@ config.keys = {
         },
     },
 
-    -- Swap panes using Ctrl+Alt+Shift + Arrow keys (sends clean Shift+arrow keys)
+    -- Swap panes using Ctrl+Alt+Shift + Arrow keys -> Sends direct swap commands to tmux
     {
         key = 'LeftArrow',
         mods = 'CTRL|ALT|SHIFT',
-        action = wezterm.action.Multiple {
-            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
-            wezterm.action.SendKey { key = 'LeftArrow', mods = 'SHIFT' },
-        },
+        action = wezterm.action.SendString '\x02:swap-pane -t "{left}"\r',
     },
     {
         key = 'RightArrow',
         mods = 'CTRL|ALT|SHIFT',
-        action = wezterm.action.Multiple {
-            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
-            wezterm.action.SendKey { key = 'RightArrow', mods = 'SHIFT' },
-        },
+        action = wezterm.action.SendString '\x02:swap-pane -t "{right}"\r',
     },
     {
         key = 'UpArrow',
         mods = 'CTRL|ALT|SHIFT',
-        action = wezterm.action.Multiple {
-            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
-            wezterm.action.SendKey { key = 'UpArrow', mods = 'SHIFT' },
-        },
+        action = wezterm.action.SendString '\x02:swap-pane -t "{up}"\r',
     },
     {
         key = 'DownArrow',
         mods = 'CTRL|ALT|SHIFT',
-        action = wezterm.action.Multiple {
-            wezterm.action.SendKey { key = 'b', mods = 'CTRL' },
-            wezterm.action.SendKey { key = 'DownArrow', mods = 'SHIFT' },
-        },
+        action = wezterm.action.SendString '\x02:swap-pane -t "{down}"\r',
     },
 }
 
