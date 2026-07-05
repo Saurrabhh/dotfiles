@@ -20,7 +20,7 @@ ble-face -s command_suffix_new 'fg=red,bg=none'
 # Performance Optimizations for Windows / Git Bash
 # ---------------------------------------------------------------------
 # Delay auto-completion to prevent computing suggestions on every single keypress
-bleopt complete_auto_delay=600
+bleopt complete_auto_delay=300
 
 # Disable syntax highlighting to avoid running highlighting logic on every keystroke
 bleopt highlight_syntax=
