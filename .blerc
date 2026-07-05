@@ -1,0 +1,34 @@
+# =====================================================================
+# 🐚 Saurrabhh's ble.sh Configuration (.blerc)
+# Customize auto-suggestions, syntax highlighting, and editor bindings.
+# =====================================================================
+
+# Styling for auto-complete suggestions (ghost text)
+# fg=242 renders a nice dim gray, bg=none ensures no solid background block
+ble-face -s auto_complete 'fg=242,bg=none'
+
+# Style for syntax errors (e.g. unrecognized commands as you type)
+# fg=red colors the text red, bg=none removes the default solid red background block
+ble-face -s syntax_error 'fg=red,bg=none'
+
+# Style for command completion suffixes (completion matches)
+# bg=none removes solid green/red background blocks
+ble-face -s command_suffix 'fg=green,bg=none'
+ble-face -s command_suffix_new 'fg=red,bg=none'
+
+# ---------------------------------------------------------------------
+# Performance Optimizations for Windows / Git Bash
+# ---------------------------------------------------------------------
+# Delay auto-completion to prevent computing suggestions on every single keypress
+bleopt complete_auto_delay=600
+
+# Disable syntax highlighting to avoid running highlighting logic on every keystroke
+bleopt highlight_syntax=
+
+# Disable filename highlighting to avoid slow Windows filesystem I/O on every typed word
+bleopt highlight_filename=
+
+# Disable variable highlighting to reduce CPU cycles during input
+bleopt highlight_variable=
+
+

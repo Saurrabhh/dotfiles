@@ -1,6 +1,6 @@
 # Saurrabhh's Dotfiles
 
-This repository contains my personal configurations for **WezTerm**, **Tmux**, and shell prompts, customized to recreate the modern **JetBrains IDEs (IntelliJ, WebStorm) "Island Dark" UI** for a unified, low-eye-strain developer workspace using **JetBrains Mono** only.
+This repository contains my personal configurations for **WezTerm**, **Tmux**, **Neovim**, and shell prompts, customized to recreate the modern **JetBrains IDEs (IntelliJ, WebStorm) "Island Dark" UI** for a unified, low-eye-strain developer workspace using **JetBrains Mono** only.
 
 ---
 
@@ -16,9 +16,9 @@ This repository contains my personal configurations for **WezTerm**, **Tmux**, a
 
 ## ⚡ Automated Installation
 
-To set up everything at once on a new machine:
+To set up everything at once:
 
-1. Clone this repository to `~/development/dotfiles` (or `C:\Users\Saurabh\development\dotfiles` on Windows/WSL):
+1. Clone this repository to `~/development/dotfiles` (or `C:\Users\Saurabh\development\dotfiles` on Windows):
    ```bash
    git clone https://github.com/Saurrabhh/dotfiles.git ~/development/dotfiles
    ```
@@ -29,8 +29,7 @@ To set up everything at once on a new machine:
    ./install.sh
    ```
 
-*The script will automatically detect whether you are on WSL or macOS, symlink the configuration files (including WezTerm, Tmux, Neovim, and Zsh) to their correct locations.*
-
+*The script will automatically detect whether you are on Windows (Git Bash), macOS, or Linux, and link/copy the configuration files (including WezTerm, Neovim, Bash, and Zsh) to their correct locations.*
 
 ---
 
@@ -43,26 +42,26 @@ Below are the detailed manual setup instructions and configuration descriptions 
 ### 💻 1. WezTerm Setup
 WezTerm serves as the main graphical terminal window, styled with JetBrains-equivalent color overrides.
 
-*   **Config File**: [.wezterm.lua](file:///mnt/c/Users/Saurabh/development/dotfiles/.wezterm.lua)
+*   **Config File**: [.wezterm.lua](file:///C:/Users/Saurabh/development/dotfiles/.wezterm.lua)
 *   **Aesthetics**: Base scheme is `Tokyo Night`, with background and text overridden to match the JetBrains IntelliJ IDEs (`#1e1f22` background, `#dfe1e5` text, and `#214283` selection blue). Has thin window padding (`10px`), disabled scrollbar, and launches maximized on Windows or in native fullscreen space on macOS.
 *   **Mac Setup**:
     ```bash
     ln -sf ~/development/dotfiles/.wezterm.lua ~/.wezterm.lua
     ```
-*   **Windows / WSL Setup**:
-    Run this command in WSL to link the config directly to your Windows User Profile (`C:\Users\Saurabh\.wezterm.lua`):
+*   **Windows (Git Bash) Setup**:
+    Run this command in Git Bash to link the config directly to your Windows User Profile:
     ```bash
-    cmd.exe /c "mklink %USERPROFILE%\.wezterm.lua C:\Users\Saurabh\development\dotfiles\.wezterm.lua"
+    ln -sf ~/development/dotfiles/.wezterm.lua ~/.wezterm.lua
     ```
 
 ---
 
 ### 📦 2. Tmux Setup
-Tmux handles layout splitting, session multiplexing, and in-terminal tabs.
+Tmux handles layout splitting, session multiplexing, and in-terminal tabs (primarily for macOS and Linux environments).
 
-*   **Config File**: [.tmux.conf](file:///mnt/c/Users/Saurabh/development/dotfiles/.tmux.conf)
-*   **Aesthetics**: Styled like a modern browser tab bar. The status line background matches the IntelliJ UI gray (`#2b2d31`). Active window tab matches the editor background (`#1e1f22`) with bold text, while inactive tabs blend in. Active pane borders are highlighted in JetBrains Blue (`#3574f0`).
-*   **Setup (WSL & Mac)**:
+*   **Config File**: [.tmux.conf](file:///C:/Users/Saurabh/development/dotfiles/.tmux.conf)
+*   **Aesthetics**: Styled like a modern browser tab bar. Active pane borders are highlighted in JetBrains Blue (`#3574f0`).
+*   **Setup**:
     ```bash
     ln -sf ~/development/dotfiles/.tmux.conf ~/.tmux.conf
     ```
@@ -76,25 +75,42 @@ Tmux handles layout splitting, session multiplexing, and in-terminal tabs.
 ### 📝 3. Neovim Setup
 Neovim is configured as a lightweight coding IDE, equipped with Native LSP configs, Flutter development tools, and in-editor rich Markdown preview.
 
-*   **Config Folder**: [.config/nvim](file:///mnt/c/Users/Saurabh/development/dotfiles/.config/nvim/)
-*   **Aesthetics**: Integrates `render-markdown.nvim` to automatically parse and render Markdown headers, code blocks, lists, and tables inline directly inside the editor buffer.
-*   **Setup (WSL & Mac)**:
-    Make sure your local config directory exists, then link the folder:
+*   **Config Folder**: [.config/nvim](file:///C:/Users/Saurabh/development/dotfiles/.config/nvim/)
+*   **Setup (macOS / Linux)**:
     ```bash
     mkdir -p ~/.config
     ln -sfn ~/development/dotfiles/.config/nvim ~/.config/nvim
     ```
-*   **Apply Config**: Launch `nvim`. On the first startup, `lazy.nvim` will automatically download and install `render-markdown.nvim`, `markdown-preview.nvim`, `nvim-treesitter`, and the required markdown syntax parsers. You can toggle the live browser preview by pressing `<leader>mp` (Space + m + p).
+*   **Setup (Windows / Git Bash)**:
+    We link to both Git Bash's configuration directory and native Windows Neovim configuration directory:
+    ```bash
+    ln -sfn ~/development/dotfiles/.config/nvim ~/.config/nvim
+    ln -sfn ~/development/dotfiles/.config/nvim ~/AppData/Local/nvim
+    ```
 
 ---
 
-### 🐚 4. Shell Prompts & Zsh Configuration
+### 🐚 4. Shell Prompts & Configurations
 
-This repository provides a portable Zsh configuration file that handles OS-specific variables, history settings, completions, and styles your prompt to show only the current folder name in JetBrains Blue (`#3574f0`).
+This repository provides portable configuration files for both **Bash** (for Git Bash on Windows, Linux, macOS) and **Zsh** (for macOS, Linux).
 
-*   **Config File**: [.zshrc](file:///mnt/c/Users/Saurabh/development/dotfiles/.zshrc)
-*   **Zsh Setup (macOS & WSL)**:
-    We recommend symlinking the repository's `.zshrc` to your home directory (the install script will back up your old one to `~/.zshrc.backup` automatically):
+#### 💻 A. Bash Setup (Git Bash & Linux)
+Styles your prompt to show only the current folder name in JetBrains Blue (`#3574f0`) and integrates **`ble.sh` (Bash Line Editor)** for rich autosuggestions, syntax highlighting, and auto-completion.
+*   **Config Files**: [.bashrc](file:///C:/Users/Saurabh/development/dotfiles/.bashrc) and [.bash_profile](file:///C:/Users/Saurabh/development/dotfiles/.bash_profile)
+*   **Automated Setup via `./install.sh`**:
+    The installation script automatically detects Git Bash on Windows and handles:
+    1. Installing `tmux` and its dependencies locally (`~/bin`).
+    2. Installing `ble.sh` by building it into `~/.local/share/blesh/`.
+*   **Manual Setup**:
+    ```bash
+    ln -sf ~/development/dotfiles/.bashrc ~/.bashrc
+    ln -sf ~/development/dotfiles/.bash_profile ~/.bash_profile
+    ```
+*   **Apply Config**: Run `source ~/.bashrc` to refresh.
+
+#### 🍎 B. Zsh Setup (macOS & Linux)
+*   **Config File**: [.zshrc](file:///C:/Users/Saurabh/development/dotfiles/.zshrc)
+*   **Setup**:
     ```bash
     ln -sf ~/development/dotfiles/.zshrc ~/.zshrc
     ```
@@ -106,9 +122,9 @@ This repository provides a portable Zsh configuration file that handles OS-speci
 
 This repository maps complex Tmux pane management functions to highly intuitive, modern WezTerm hotkeys. You can use either the WezTerm global shortcuts or the native Tmux prefix commands.
 
-### 💻 1. WezTerm Custom Shortcuts (WSL & macOS)
+### 💻 1. WezTerm Custom Shortcuts
 
-| Action | Shortcut (WSL / Windows) | Shortcut (macOS) | Under-the-Hood Tmux Command |
+| Action | Shortcut (Windows) | Shortcut (macOS) | Under-the-Hood Tmux Command |
 | :--- | :--- | :--- | :--- |
 | **Copy Selected Text** | `Ctrl + Shift + c` | `Cmd + c` | Copy selection to system clipboard |
 | **Paste Clipboard Text** | `Ctrl + v` | `Cmd + v` | Paste from system clipboard |
@@ -139,4 +155,3 @@ If you are using Tmux directly or want to use the default bindings, these custom
 | `Ctrl + b` then `J` | Move current pane and join it **below** the last active pane |
 | `Ctrl + b` then `K` | Move current pane and join it **to the right** of the last active pane |
 | `Ctrl + b` then `q` | Displays pane numbers temporarily (press `1-9` to jump directly) |
-

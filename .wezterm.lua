@@ -18,8 +18,8 @@ local is_windows = wezterm.target_triple == 'x86_64-pc-windows-msvc'
 -- ---------------------------------------------------------------------
 -- Select the default shell program depending on the platform.
 if is_windows then
-    -- On Windows, launch WSL directly into your default Linux distro.
-    config.default_prog = { 'wsl.exe' }
+    -- On Windows, launch Git Bash.
+    config.default_prog = { 'C:/Program Files/Git/bin/bash.exe', '--login', '-i' }
 else
     -- On macOS, launch the standard login Zsh shell.
     config.default_prog = { '/bin/zsh' }

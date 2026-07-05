@@ -2,116 +2,230 @@
 
 # =====================================================================
 # 🚀 Dotfiles Installer Script
-# Supported Platforms: macOS, Linux, and WSL (Windows Subsystem for Linux)
-# Automates the symlinking of configurations and configures shell prompts.
+# Supported Platforms: macOS (Zsh) and Windows (Git Bash)
+# Automates the package installation and symlinking/copying of 
+# configurations for WezTerm, Tmux, Neovim, Bash, and Zsh.
 # =====================================================================
 
-# Fail immediately if a command exits with a non-zero status
+# Fail immediately if any command exits with a non-zero status
 set -e
 
 # Resolve the absolute path to this dotfiles repository directory
-# This allows the script to be run from any working directory.
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo "====================================================="
-echo "⚙️  Starting Dotfiles Installation (WezTerm & Tmux & Neovim)"
+echo "⚙️  Starting Dotfiles Installation & Package Setup"
 echo "====================================================="
 
 # ---------------------------------------------------------------------
-# 1. TMUX CONFIGURATION SETUP
+# 1. DETECT OPERATING SYSTEM
 # ---------------------------------------------------------------------
-# Symlinks the .tmux.conf file to the user's home directory.
-# Works natively on both WSL/Linux and macOS.
-echo "🔗 Symlinking Tmux configuration..."
-ln -sf "$DIR/.tmux.conf" "$HOME/.tmux.conf"
-echo "✅ Symlinked .tmux.conf to ~/.tmux.conf"
+IS_WINDOWS=false
+IS_MAC=false
+
+if [[ "$(uname -s)" == *"MINGW"* || "$(uname -s)" == *"MSYS"* || "$(uname -s)" == *"CYGWIN"* ]]; then
+    IS_WINDOWS=true
+    echo "💻 Windows (Git Bash) environment detected."
+elif [[ "$(uname -s)" == "Darwin" ]]; then
+    IS_MAC=true
+    echo "🍎 macOS (Zsh) environment detected."
+else
+    echo "❌ Unsupported environment. Only Windows (Git Bash) and macOS (Zsh) are supported."
+    exit 1
+fi
 
 # ---------------------------------------------------------------------
-# 2. WEZTERM CONFIGURATION SETUP
+# 2. PACKAGE & APPLICATION INSTALLATION
 # ---------------------------------------------------------------------
-# WezTerm runs as a host desktop application.
-#   * On WSL: It runs on Windows, reading its config from %USERPROFILE%\.wezterm.lua
-#   * On macOS: It runs natively, reading from ~/.wezterm.lua
-if grep -qE "(Microsoft|WSL)" /proc/version 2>/dev/null; then
-    echo "💻 WSL environment detected. Configuring Windows WezTerm..."
-    
-    # Query the Windows %USERPROFILE% environment variable and trim carriage returns
-    WIN_USER_PROFILE=$(cmd.exe /c "echo %USERPROFILE%" 2>/dev/null | tr -d '\r')
-    
-    if [ -n "$WIN_USER_PROFILE" ]; then
-        # Convert the Windows file path (e.g. C:\Users\Saurabh) into WSL format (/mnt/c/Users/Saurabh)
-        WIN_HOME=$(wslpath "$WIN_USER_PROFILE")
+echo "📦 Installing required applications..."
+
+if [ "$IS_MAC" = true ]; then
+    # Check for Homebrew
+    if ! command -v brew &>/dev/null; then
+        echo "📥 Homebrew not found. Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         
-        if [ -d "$WIN_HOME" ]; then
-            # Convert the WSL dotfiles path of .wezterm.lua to a Windows NTFS path
-            WIN_FILE_PATH=$(wslpath -w "$DIR/.wezterm.lua")
-            
-            # Remove any existing WezTerm files, directories, or links in the Windows profile
-            rm -rf "$WIN_HOME/.wezterm.lua"
-            
-            # First attempt: Try creating a standard symlink directly from WSL.
-            # This works if the destination is on a mounted Windows drive (e.g., /mnt/c/)
-            # and Developer Mode is enabled.
-            if [[ "$DIR" == /mnt/* ]] && ln -sf "$DIR/.wezterm.lua" "$WIN_HOME/.wezterm.lua" 2>/dev/null; then
-                echo "✅ Created Windows NTFS symlink for .wezterm.lua via ln -sf"
-            # Second attempt: Fallback to cmd.exe mklink without escaped internal quotes
-            # (which avoids the trailing backslash/os error 123 bug).
-            elif cmd.exe /c mklink "%USERPROFILE%\.wezterm.lua" "$WIN_FILE_PATH" &>/dev/null; then
-                echo "✅ Created Windows NTFS symlink for .wezterm.lua via cmd.exe mklink"
-            else
-                # Final fallback: Copy the file directly if symlink creation is blocked/fails
-                cp "$DIR/.wezterm.lua" "$WIN_HOME/.wezterm.lua"
-                echo "✅ Copied .wezterm.lua to $WIN_HOME/.wezterm.lua (symlink fallback)"
-            fi
+        # Load brew environment for the current script session
+        if [ -f "/opt/homebrew/bin/brew" ]; then
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+        elif [ -f "/usr/local/bin/brew" ]; then
+            eval "$(/usr/local/bin/brew shellenv)"
+        fi
+    fi
+    
+    echo "🍺 Installing packages via Homebrew..."
+    brew install tmux neovim fzf zsh-autosuggestions zsh-syntax-highlighting
+    
+    # Install WezTerm cask if not present
+    if ! brew list --cask wezterm &>/dev/null; then
+        echo "📥 Installing WezTerm..."
+        brew install --cask wezterm
+    fi
+
+elif [ "$IS_WINDOWS" = true ]; then
+    # 1. Install WezTerm
+    if ! command -v wezterm &>/dev/null && ! [ -f "/c/Program Files/WezTerm/wezterm.exe" ]; then
+        echo "📥 Installing WezTerm via Winget..."
+        winget.exe install --id=wez.wezterm -e --accept-source-agreements --accept-package-agreements
+    else
+        echo "✅ WezTerm is already installed."
+    fi
+
+    # 2. Install Neovim
+    if ! command -v nvim &>/dev/null; then
+        echo "📥 Installing Neovim via Winget..."
+        winget.exe install --id=Neovim.Neovim -e --accept-source-agreements --accept-package-agreements
+    else
+        echo "✅ Neovim is already installed."
+    fi
+
+    # 3. Install Tmux and Script wrapper for Git Bash
+    if ! command -v tmux &>/dev/null || ! tmux -V &>/dev/null || ! command -v script &>/dev/null; then
+        echo "📥 Installing tmux and script utility for Git Bash..."
+        TEMP_DIR="/tmp/tmux_install"
+        mkdir -p "$TEMP_DIR"
+        mkdir -p "$HOME/bin"
+        
+        # Download files
+        curl -L -o "$TEMP_DIR/zstd.zip" "https://github.com/facebook/zstd/releases/download/v1.5.7/zstd-v1.5.7-win64.zip"
+        curl -L -o "$TEMP_DIR/tmux.tar.zst" "https://mirror.clarkson.edu/msys2/msys/x86_64/tmux-3.4-2-x86_64.pkg.tar.zst"
+        curl -L -o "$TEMP_DIR/libevent.tar.zst" "https://mirror.msys2.org/msys/x86_64/libevent-2.1.12-4-x86_64.pkg.tar.zst"
+        curl -L -o "$TEMP_DIR/util-linux.tar.zst" "https://mirror.clarkson.edu/msys2/msys/x86_64/util-linux-2.35.2-4-x86_64.pkg.tar.zst"
+        
+        # Extract zstd
+        unzip -d "$TEMP_DIR/zstd_extracted" "$TEMP_DIR/zstd.zip"
+        ZSTD_EXE=$(find "$TEMP_DIR/zstd_extracted" -name "zstd.exe" | head -n 1)
+        ZSTD_DIR=$(dirname "$ZSTD_EXE")
+        
+        # Add zstd to path for tar
+        export PATH="$ZSTD_DIR:$PATH"
+        
+        # Extract tmux, libevent, and script
+        cd "$TEMP_DIR"
+        tar --force-local -xf tmux.tar.zst usr/bin/tmux.exe
+        tar --force-local -xf libevent.tar.zst usr/bin/msys-event-2-1-7.dll usr/bin/msys-event_core-2-1-7.dll usr/bin/msys-event_extra-2-1-7.dll usr/bin/msys-event_openssl-2-1-7.dll usr/bin/msys-event_pthreads-2-1-7.dll
+        tar --force-local -xf util-linux.tar.zst usr/bin/script.exe
+        
+        # Install to ~/bin
+        cp usr/bin/tmux.exe "$HOME/bin/"
+        cp usr/bin/msys-event*.dll "$HOME/bin/"
+        cp usr/bin/script.exe "$HOME/bin/"
+        cd - >/dev/null
+        
+        # Clean up
+        rm -rf "$TEMP_DIR"
+        echo "✅ tmux and script wrapper successfully installed to $HOME/bin"
+    else
+        echo "✅ tmux and script wrapper are already installed."
+    fi
+
+    # 4. Install ble.sh (Bash Line Editor) for Git Bash
+    echo "🐚 Checking Bash Line Editor (ble.sh) for auto-suggestions..."
+    if [ ! -f "$HOME/.local/share/blesh/ble.sh" ]; then
+        echo "📥 Installing ble.sh..."
+        if command -v git &>/dev/null && command -v make &>/dev/null && command -v gawk &>/dev/null; then
+            TEMP_BLE="/tmp/ble_install"
+            rm -rf "$TEMP_BLE"
+            git clone --recursive --depth 1 --shallow-submodules https://github.com/akinomyoga/ble.sh.git "$TEMP_BLE"
+            make -C "$TEMP_BLE" install PREFIX=~/.local
+            rm -rf "$TEMP_BLE"
+            echo "✅ ble.sh installed successfully to ~/.local/share/blesh/"
         else
-            echo "⚠️  Could not resolve Windows home directory path: $WIN_HOME"
+            echo "⚠️  Could not install ble.sh: git, make, or gawk not found in environment."
+            exit 1
         fi
     else
-        echo "⚠️  Could not retrieve Windows %USERPROFILE% via cmd.exe"
+        echo "✅ ble.sh is already installed."
     fi
-else
-    # macOS or native Linux environment
-    echo "🍎 macOS/Linux environment detected. Configuring native WezTerm..."
-    ln -sf "$DIR/.wezterm.lua" "$HOME/.wezterm.lua"
-    echo "✅ Symlinked .wezterm.lua to ~/.wezterm.lua"
 fi
 
 # ---------------------------------------------------------------------
-# 3. NEOVIM CONFIGURATION SETUP
+# 3. LINK/COPY HELPER FUNCTION
 # ---------------------------------------------------------------------
-# Symlinks the .config/nvim folder to ~/.config/nvim.
-# This configures LSP parameters, Flutter tooling, and inline Markdown rendering.
-echo "🔗 Symlinking Neovim configuration..."
-mkdir -p "$HOME/.config"
-ln -sfn "$DIR/.config/nvim" "$HOME/.config/nvim"
-echo "✅ Symlinked .config/nvim directory to ~/.config/nvim"
+# Robust function to handle linking on Windows/macOS/Linux.
+# Falls back to copying if symlink creation fails or is blocked on Windows.
+link_item() {
+    local src="$1"
+    local dest="$2"
+    
+    # Ensure parent directory exists
+    mkdir -p "$(dirname "$dest")"
+    
+    # Remove existing file, directory, or link
+    rm -rf "$dest"
+    
+    if ln -sf "$src" "$dest" 2>/dev/null; then
+        echo "✅ Linked: $dest -> $src"
+    else
+        if [ -d "$src" ]; then
+            cp -r "$src" "$dest"
+        else
+            cp "$src" "$dest"
+        fi
+        echo "✅ Copied (fallback): $dest -> $src"
+    fi
+}
 
 # ---------------------------------------------------------------------
-# 4. SHELL PROMPT & CONFIGURATION SETUP
+# 4. CONFIGURATION DEPLOYMENT
 # ---------------------------------------------------------------------
+echo "⚙️  Deploying configurations..."
+
+# WezTerm Configuration Setup
+echo "💻 Configuring WezTerm..."
+link_item "$DIR/.wezterm.lua" "$HOME/.wezterm.lua"
+
+# Tmux Configuration Setup
+echo "🔗 Configuring Tmux..."
+link_item "$DIR/.tmux.conf" "$HOME/.tmux.conf"
+
+# Neovim Configuration Setup
+echo "🔗 Configuring Neovim..."
+if [ "$IS_WINDOWS" = true ]; then
+    # Link standard ~/.config/nvim and Windows AppData/Local/nvim
+    link_item "$DIR/.config/nvim" "$HOME/.config/nvim"
+    link_item "$DIR/.config/nvim" "$HOME/AppData/Local/nvim"
+else
+    link_item "$DIR/.config/nvim" "$HOME/.config/nvim"
+fi
+
+# Shell Configuration Setup
 echo "✏️  Configuring Shell Environments..."
 
-# Zsh Shell Setup (Symlink ~/.zshrc)
-# Symlinks the portable, OS-aware .zshrc from the dotfiles repository.
-# Keeps your previous .zshrc file safe by backing it up to .zshrc.backup.
-echo "🔗 Symlinking Zsh configuration..."
-if [ -f "$HOME/.zshrc" ] && [ ! -L "$HOME/.zshrc" ]; then
-    mv "$HOME/.zshrc" "$HOME/.zshrc.backup"
-    echo "⚠️  Existing ~/.zshrc backed up to ~/.zshrc.backup"
+# Helper to backup existing configuration files before overwriting
+backup_and_link() {
+    local src="$1"
+    local dest="$2"
+    if [ -f "$dest" ] && [ ! -L "$dest" ]; then
+        mv "$dest" "$dest.backup"
+        echo "⚠️  Existing $dest backed up to $dest.backup"
+    fi
+    link_item "$src" "$dest"
+}
+
+if [ "$IS_MAC" = true ]; then
+    backup_and_link "$DIR/.zshrc" "$HOME/.zshrc"
+elif [ "$IS_WINDOWS" = true ]; then
+    backup_and_link "$DIR/.bashrc" "$HOME/.bashrc"
+    backup_and_link "$DIR/.bash_profile" "$HOME/.bash_profile"
+    backup_and_link "$DIR/.blerc" "$HOME/.blerc"
 fi
-ln -sf "$DIR/.zshrc" "$HOME/.zshrc"
-echo "✅ Symlinked .zshrc to ~/.zshrc"
 
 # ---------------------------------------------------------------------
 # 5. ENVIRONMENT RELOADING
 # ---------------------------------------------------------------------
 # Reload the active Tmux configuration if the Tmux server is currently running.
-if tmux info &>/dev/null; then
+if command -v tmux &>/dev/null && tmux info &>/dev/null; then
     echo "🔄 Reloading active Tmux configuration..."
     tmux source-file "$HOME/.tmux.conf"
 fi
 
 echo "====================================================="
-echo "🎉 Dotfiles installation completed successfully!"
-echo "➡️  Reload your shell to apply: source ~/.zshrc"
+echo "🎉 Dotfiles setup & installation completed successfully!"
+echo "➡️  Reload your shell to apply changes:"
+if [ "$IS_WINDOWS" = true ]; then
+    echo "   source ~/.bashrc"
+else
+    echo "   source ~/.zshrc"
+fi
 echo "====================================================="

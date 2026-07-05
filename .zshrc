@@ -20,7 +20,7 @@ fi
 # 2. ENVIRONMENT PATHS & SHELL VARIABLES
 # ---------------------------------------------------------------------
 # Append local user bin directories (useful for pip, cargo, and npm global installs)
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 if $IS_MAC; then
     # Initialize Homebrew paths dynamically on macOS.
@@ -91,3 +91,11 @@ if $IS_MAC; then
 else
     [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
+
+# Fix: Run agy using winpty inside a tmux session under MSYS2/Git Bash/Cygwin (PTY/TTY workaround)
+if [[ -n "$TMUX" ]]; then
+    if [[ "$(uname -s)" == *"MINGW"* || "$(uname -s)" == *"MSYS"* || "$(uname -s)" == *"CYGWIN"* ]]; then
+        alias agy="winpty agy"
+    fi
+fi
+
